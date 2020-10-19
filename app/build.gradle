@@ -1,0 +1,97 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        applicationId "com.shofiq.tvshowapp"
+        minSdkVersion 16
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        dataBinding true
+    }
+}
+ext{
+    //material design
+    material_design="1.2.1"
+
+    //retrofit & gson
+    retrofit_version="2.9.0"
+    //glide
+    glide_version="4.11.0"
+    //lifecycle_version
+    lifecycle_version="2.2.0"
+    //room and rx java
+    room_rx_java_version="2.2.5"
+    //rx android
+    rx_java_rx_android_version="2.0.1"
+    //scalable size
+    sdp_ssp_version="1.0.6"
+    //rounded_imageview
+    rounded_img_version="2.3.0"
+    //spinkit
+    spinkit_version="1.4.0"
+    // okhttp
+    okHttpVersion = "3.11.0"
+    // picasso
+    picasso_version= "2.71828"
+
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation "com.google.android.material:material:$material_design"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
+
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+
+    annotationProcessor "androidx.room:room-runtime:$room_rx_java_version"
+    implementation "androidx.room:room-rxjava2:$room_rx_java_version"
+
+    implementation "io.reactivex.rxjava2:rxandroid:$rx_java_rx_android_version"
+
+    implementation "com.intuit.sdp:sdp-android:$sdp_ssp_version"
+    implementation "com.intuit.ssp:ssp-android:$sdp_ssp_version"
+
+    implementation "com.makeramen:roundedimageview:$rounded_img_version"
+    implementation "com.github.ybq:Android-SpinKit:$spinkit_version"
+
+    implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+
+
+    implementation "com.squareup.picasso:picasso:$picasso_version"
+
+
+
+
+}
