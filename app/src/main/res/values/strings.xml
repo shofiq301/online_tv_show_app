@@ -2,4 +2,9 @@
     <string name="app_name">Tv Show App Demo</string>
     <string name="tv_shows_most_popular">TV Shows | Most popular</string>
     <string name="loading">Loading...</string>
+    <string name="read_more">Read more</string>
+    <string name="show_less">Show less</string>
+    <string name="u2022">•</string>
+    <string name="website">Website</string>
+    <string name="episodes">Episodes</string>
 </resources>

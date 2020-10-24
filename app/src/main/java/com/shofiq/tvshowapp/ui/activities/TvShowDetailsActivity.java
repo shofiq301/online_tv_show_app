@@ -7,11 +7,17 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -23,8 +29,9 @@ import com.shofiq.tvshowapp.responses.TvShowDetailsResponse;
 import com.shofiq.tvshowapp.viewmodels.TvShowDetailsViewModel;
 
 import java.util.List;
+import java.util.Locale;
 
-public class TvShowDetailsActivity extends AppCompatActivity {
+public class TvShowDetailsActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ActivityTvShowDetailsBinding binding;
     private TvShowDetailsViewModel viewModel;
@@ -38,6 +45,8 @@ public class TvShowDetailsActivity extends AppCompatActivity {
 
         tvShow=new Gson().fromJson(getIntent().getStringExtra("tvshowitem"), TvShow.class);
         getTvShowDetails();
+
+        binding.imgBack.setOnClickListener(this);
     }
 
     private void getTvShowDetails() {
@@ -48,6 +57,38 @@ public class TvShowDetailsActivity extends AppCompatActivity {
                if (tvShowDetailsResponse.getTvShow().getPictures()!=null){
                    loadSliders(tvShowDetailsResponse.getTvShow().getPictures());
                }
+               binding.setTvShowImageUrl(tvShowDetailsResponse.getTvShow().getImagePath());
+               binding.imgTvShowImage.setVisibility(View.VISIBLE);
+               loadTvShowBasicDetails();
+               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                   binding.setTvShowDescription(String.valueOf(Html.fromHtml(tvShowDetailsResponse.getTvShow().getDescription(), Html.FROM_HTML_MODE_LEGACY)));
+               }else {
+                   binding.setTvShowDescription(String.valueOf(Html.fromHtml(tvShowDetailsResponse.getTvShow().getDescription())));
+               }
+               binding.txtTvShowDescription.setVisibility(View.VISIBLE);
+               binding.txtTvShowDescriptionreadMore.setVisibility(View.VISIBLE);
+               binding.txtTvShowDescriptionreadMore.setOnClickListener(this);
+               binding.setRating(String.format(Locale.getDefault(),
+                       "%.2f",
+                       Double.parseDouble(tvShowDetailsResponse.getTvShow().getRating())));
+               if (tvShowDetailsResponse.getTvShow().getGenres()!=null){
+                   binding.setGenre(tvShowDetailsResponse.getTvShow().getGenres().get(0));
+               }
+               else {
+                   binding.setGenre("N/A");
+               }
+               binding.setRuntime(tvShowDetailsResponse.getTvShow().getRuntime()+" Min");
+               binding.layoutMisc.setVisibility(View.VISIBLE);
+               binding.devider1.setVisibility(View.VISIBLE);
+               binding.devider2.setVisibility(View.VISIBLE);
+               binding.btnWebsite.setOnClickListener(view -> {
+                   Intent intent=new Intent(Intent.ACTION_VIEW);
+                   intent.setData(Uri.parse(tvShowDetailsResponse.getTvShow().getUrl()));
+                   startActivity(intent);
+               });
+               binding.btnWebsite.setVisibility(View.VISIBLE);
+               binding.btnEpisodes.setVisibility(View.VISIBLE);
+
            }
         });
     }
@@ -100,5 +141,38 @@ public class TvShowDetailsActivity extends AppCompatActivity {
                 ));
             }
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.imgBack:
+                onBackPressed();
+                break;
+            case R.id.txtTvShowDescriptionreadMore:
+                if (binding.txtTvShowDescriptionreadMore.getText().equals(getString(R.string.read_more))){
+                    binding.txtTvShowDescription.setMaxLines(Integer.MAX_VALUE);
+                    binding.txtTvShowDescription.setEllipsize(null);
+                    binding.txtTvShowDescriptionreadMore.setText(R.string.show_less);
+                }else {
+                    binding.txtTvShowDescription.setMaxLines(4);
+                    binding.txtTvShowDescription.setEllipsize(TextUtils.TruncateAt.END);
+                    binding.txtTvShowDescriptionreadMore.setText(R.string.read_more);
+                }
+                break;
+        }
+    }
+
+    private void loadTvShowBasicDetails(){
+        binding.setTvShowName(tvShow.getName());
+        binding.setTvShowNetwork(tvShow.getNetwork());
+        binding.setTvShowCountry(tvShow.getCountry());
+        binding.setTvShowStatus(tvShow.getStatus());
+        binding.setTvShowStartedDate(tvShow.getStartDate());
+
+        binding.txtTvShowName.setVisibility(View.VISIBLE);
+        binding.txtTvShowNetworkCountry.setVisibility(View.VISIBLE);
+        binding.txtTvShowStatus.setVisibility(View.VISIBLE);
+        binding.txtTvShowStartedate.setVisibility(View.VISIBLE);
     }
 }

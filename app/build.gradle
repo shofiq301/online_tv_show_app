@@ -33,7 +33,6 @@ android {
 ext{
     //material design
     material_design="1.2.1"
-
     //retrofit & gson
     retrofit_version="2.9.0"
     //glide
@@ -51,7 +50,7 @@ ext{
     //spinkit
     spinkit_version="1.4.0"
     // okhttp
-    okHttpVersion = "3.11.0"
+    okHttpVersion = "3.14.9"
     // picasso
     picasso_version= "2.71828"
 
@@ -68,9 +67,6 @@ dependencies {
     implementation "com.google.android.material:material:$material_design"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
-
-    implementation "com.github.bumptech.glide:glide:$glide_version"
-    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
 
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 
