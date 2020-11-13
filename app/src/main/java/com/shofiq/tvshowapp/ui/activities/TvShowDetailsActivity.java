@@ -1,29 +1,33 @@
 package com.shofiq.tvshowapp.ui.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TabHost;
-import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.shofiq.tvshowapp.R;
+import com.shofiq.tvshowapp.adapters.EpisodeAdapter;
 import com.shofiq.tvshowapp.adapters.ImageSliderAdapter;
 import com.shofiq.tvshowapp.databinding.ActivityTvShowDetailsBinding;
+import com.shofiq.tvshowapp.databinding.LayoutEpisodesBottomSheetBinding;
 import com.shofiq.tvshowapp.models.TvShow;
 import com.shofiq.tvshowapp.responses.TvShowDetailsResponse;
 import com.shofiq.tvshowapp.viewmodels.TvShowDetailsViewModel;
@@ -36,6 +40,8 @@ public class TvShowDetailsActivity extends AppCompatActivity implements View.OnC
     private ActivityTvShowDetailsBinding binding;
     private TvShowDetailsViewModel viewModel;
     private TvShow tvShow;
+
+    private BottomSheetDialog  episodeBottomSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +95,33 @@ public class TvShowDetailsActivity extends AppCompatActivity implements View.OnC
                binding.btnWebsite.setVisibility(View.VISIBLE);
                binding.btnEpisodes.setVisibility(View.VISIBLE);
 
+               binding.btnEpisodes.setOnClickListener(view -> {
+                   episodeBottomSheet = null;
+                   showEpisodeBottomSheet(tvShowDetailsResponse);
+               });
+
            }
         });
     }
+
+    private void showEpisodeBottomSheet(TvShowDetailsResponse tvShowDetailsResponse) {
+        if (episodeBottomSheet==null){
+            episodeBottomSheet = new BottomSheetDialog(this);
+            LayoutEpisodesBottomSheetBinding bottomSheetBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.layout_episodes_bottom_sheet, findViewById(R.id.episodesContainer), false);
+            episodeBottomSheet.setContentView(bottomSheetBinding.getRoot());
+            bottomSheetBinding.recyclerEpisodeList.setAdapter(new EpisodeAdapter(tvShowDetailsResponse.getTvShow().getEpisodes()));
+            bottomSheetBinding.txtTitle.setText(String.format("Episode | %s", tvShow.getName()));
+            bottomSheetBinding.imgClose.setOnClickListener(view -> episodeBottomSheet.dismiss());
+            FrameLayout frameLayout= episodeBottomSheet.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (frameLayout!=null){
+                BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(frameLayout);
+                bottomSheetBehavior.setPeekHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+            episodeBottomSheet.show();
+        }
+    }
+
     private void loadSliders(List<String> sliderImages){
         binding.sliderViewPager.setOffscreenPageLimit(1);
         binding.sliderViewPager.setAdapter(new ImageSliderAdapter(sliderImages));
@@ -160,6 +190,8 @@ public class TvShowDetailsActivity extends AppCompatActivity implements View.OnC
                     binding.txtTvShowDescriptionreadMore.setText(R.string.read_more);
                 }
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + view.getId());
         }
     }
 
